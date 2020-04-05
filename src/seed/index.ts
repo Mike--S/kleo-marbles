@@ -1,19 +1,17 @@
 import { Database } from '@connection';
-import { usersGenerator } from './users.generator';
-import { actorsGenerator } from './actors.generator';
-import { moviesGenerator } from './movies.generator';
+import { from, zip } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
+import { servicesGenerator$ } from './services.generator';
+import { categoriesGenerator$ } from './categories.generator';
 
 const REGISTERED_GENERATORS = [
-  usersGenerator,
-  actorsGenerator,
-  moviesGenerator,
+  servicesGenerator$,
+  categoriesGenerator$
 ];
 
-const seed = async () => {
-  await Database.connect();
-  await Database.drop();
-  await Promise.all(REGISTERED_GENERATORS.map(generate => generate()));
-  await Database.disconnect();
-};
+from(Database.connect()).pipe(
+  switchMap(() => from(Database.drop())),
+  switchMap(() => zip(...REGISTERED_GENERATORS)),
+  switchMap(() => from(Database.disconnect()))
+).subscribe(a => console.log('final'));
 
-seed();
