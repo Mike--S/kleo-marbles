@@ -2,6 +2,7 @@ import { combineRoutes, EffectFactory } from '@marblejs/core';
 import { versionEffect$, preflightEffect$, notFoundEffect$ } from './common/effects';
 import { auth$ } from './auth';
 import { users$ } from './users';
+import { services$ } from './services';
 import { categories$ } from './categories';
 
 const root$ = EffectFactory
@@ -23,6 +24,7 @@ export const api$ = combineRoutes('/api/v1', [
   root$,
   auth$,
   users$,
+  services$,
   categories$,
   preflight$,
   notFound$
